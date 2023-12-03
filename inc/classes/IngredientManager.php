@@ -2,7 +2,7 @@
 
 class IngredientManager {
     private $pdo;
-    private $table_name = 'Ingredients';
+    private $table_name = 'ingredients';
 
     public function __construct($db) {
         $this->pdo = $db;
@@ -25,7 +25,7 @@ class IngredientManager {
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         $stmt->closeCursor();
 
-        return new Ingredient($result['ingredient_id'], $result['name']);
+        return new Ingredient($result['ingredient_id'], $result['name'], $result['image']);
     }
 
     public function updateIngredient($ingredient_id, $name) {
@@ -45,5 +45,20 @@ class IngredientManager {
 
         $stmt->execute();
         $stmt->closeCursor();
+    }
+
+    public function getAllIngredients() {
+        $query = "SELECT * FROM " . $this->table_name;
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute();
+
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt->closeCursor();
+
+        $ingredients = [];
+        foreach ($results as $result) {
+            $ingredients[] = new Ingredient($result['ingredient_id'], $result['name'], $result['image']);
+        }
+        return $ingredients;
     }
 }

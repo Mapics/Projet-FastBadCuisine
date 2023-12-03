@@ -19,21 +19,21 @@ class IngredientManagerTest extends TestCase {
     }
 
     public function testCreateIngredient() {
-        $this->ingredientManager->createIngredient('Eggs');
+        $this->ingredientManager->createIngredient('test');
         
-        $stmt = $this->pdo->query('SELECT * FROM Ingredients WHERE name = "Eggs"');
+        $stmt = $this->pdo->query('SELECT * FROM Ingredients WHERE name = "test"');
         $ingredient = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        $this->assertEquals('Eggs', $ingredient['name']);
+        $this->assertEquals('test', $ingredient['name']);
     }
 
     public function testGetIngredientById() {
-        $this->ingredientManager->createIngredient('Milk');
+        $this->ingredientManager->createIngredient('lait');
 
         $ingredient = $this->ingredientManager->getIngredient(1);
 
         $this->assertInstanceOf(Ingredient::class, $ingredient);
-        $this->assertEquals('Milk', $ingredient->getName());
+        $this->assertEquals('lait', $ingredient->getName());
     }
     
     public function testUpdateIngredient() {
@@ -57,5 +57,17 @@ class IngredientManagerTest extends TestCase {
         }
         
         $this->assertNull($ingredient);
+    }
+
+    public function testGetAllIngredients() {
+        $this->ingredientManager->createIngredient('test');
+        $this->ingredientManager->createIngredient('test2');
+    
+        $ingredients = $this->ingredientManager->getAllIngredients();
+    
+        $this->assertCount(2, $ingredients);
+        $this->assertTrue(is_array($ingredients));
+        $this->assertInstanceOf(Ingredient::class, $ingredients[0]);
+        $this->assertInstanceOf(Ingredient::class, $ingredients[1]);
     }
 }
